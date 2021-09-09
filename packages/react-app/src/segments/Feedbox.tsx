@@ -8,8 +8,8 @@ import { useWeb3React } from '@web3-react/core'
 import { addresses, abis } from "@project/contracts";
 import EPNSCoreHelper from 'helpers/EPNSCoreHelper';
 import { ethers } from "ethers";
-import { BigNumber, bigNumberify, formatEther } from 'ethers/utils';
 import ChannelsDataStore from "singletons/ChannelsDataStore";
+import { NotificationItem, utils } from "epns-frontend-sdk-staging";
 
 import ViewNotificationItem from "components/ViewNotificationItem";
 import NotificationToast from "components/NotificationToast";
@@ -42,7 +42,7 @@ function Feedbox({ epnsReadProvider }) {
     axios.post(NOTIFICATIONS_URL, body)
     .then(({data}) => {
       const {count, results} = data;
-      const parsedNotification = results.map(parseAPINotifications);
+      const parsedNotification = utils.parseApiResponse(results);
       if(count === 0){
         setFinishedFetching(true);
       }
@@ -200,12 +200,16 @@ function Feedbox({ epnsReadProvider }) {
         {notifications &&
           <Items id="scrollstyle-secondary">
             {notifications.map((oneNotification, index) => {  
+              const {
+                cta, title, message
+              } = oneNotification;
               return (
                 <>
                 {showWayPoint(index) && (<Waypoint onEnter = { () => handlePagination()}/>)}
-                <ViewNotificationItem
-                  key={oneNotification.id}
-                  notificationObject={oneNotification}
+                <NotificationItem
+                  notificationTitle={title}
+                  notificationBody={message}
+                  cta={cta}
                 />
                 </>
               )
