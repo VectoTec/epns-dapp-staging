@@ -33,7 +33,11 @@ import {
   setCanVerify,
   setDelegatees,
 } from "redux/slices/adminSlice";
-import { addNewNotification, toggleToggler, resetState } from "redux/slices/notificationSlice";
+import {
+  addNewNotification,
+  toggleToggler,
+  resetState,
+} from "redux/slices/notificationSlice";
 
 export const ALLOWED_CORE_NETWORK = envConfig.coreContractChain; //chainId of network which we have deployed the core contract on
 const CHANNEL_TAB = 1; //Default to 1 which is the channel tab
@@ -84,7 +88,7 @@ function Home() {
 
   React.useEffect(() => {
     dispatch(resetState());
-    setTimeout(() => dispatch(toggleToggler()), 300)
+    setTimeout(() => dispatch(toggleToggler()), 300);
   }, [account]);
 
   /**
@@ -216,7 +220,7 @@ function Home() {
         // fetch basic information abouot the channels and store it to state
         if (delegators && delegators.channelOwners) {
           const channelInformationPromise = [
-            ...new Set([account, ...delegators.channelOwners])//make the accounts unique
+            ...new Set([account, ...delegators.channelOwners]), //make the accounts unique
           ].map((channelAddress) =>
             ChannelsDataStore.instance
               .getChannelJsonAsync(channelAddress)
@@ -399,7 +403,7 @@ function Home() {
           </ControlText>
         </ControlButton>
 
-        <ControlButton
+        {/* <ControlButton
           index={4}
           active={controlAt == 4 ? 1 : 0}
           border="#e20880"
@@ -411,14 +415,14 @@ function Home() {
           <ControlText active={controlAt == 4 ? 1 : 0}>
             Spam Notifications
           </ControlText>
-        </ControlButton>
+        </ControlButton> */}
       </Controls>
       <Interface>
         {controlAt == 0 && <Feedbox />}
         {controlAt == 1 && <ViewChannels />}
         {controlAt == 2 && adminStatusLoaded && <ChannelOwnerDashboard />}
         {controlAt == 3 && <Info />}
-        {controlAt == 4 && <SpamBox />}
+        {/* {controlAt == 4 && <SpamBox />} */}
         {toast && (
           <NotificationToast notification={toast} clearToast={clearToast} />
         )}

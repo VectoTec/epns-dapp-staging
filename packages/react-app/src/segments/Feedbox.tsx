@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Loader from "react-loader-spinner";
+import SpamBox from "segments/spam";
 import { Waypoint } from "react-waypoint";
 import { useWeb3React } from "@web3-react/core";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,6 +12,7 @@ import {
   utils,
   NotificationItem,
 } from "@epnsproject/frontend-sdk-staging";
+import { Button } from "components/SharedStyling";
 import {
   addPaginatedNotifications,
   incrementPage,
@@ -24,6 +26,7 @@ const NOTIFICATIONS_PER_PAGE = 10;
 function Feedbox() {
   const dispatch = useDispatch();
   const { account } = useWeb3React();
+  const [spam, setSpam] = React.useState(false);
   const { epnsCommReadProvider } = useSelector((state: any) => state.contracts);
   const { notifications, page, finishedFetching, toggle } = useSelector(
     (state: any) => state.notifications
@@ -112,50 +115,73 @@ function Feedbox() {
 
   // Render
   return (
-    <>
-      <Container>
-        {bgUpdateLoading && (
-          <div style={{marginTop: "10px"}}>
-            <Loader type="Oval" color="#35c5f3" height={40} width={40} />
-          </div>
-        )}
-        {notifications && (
-          <Items id="scrollstyle-secondary">
-            {notifications.map((oneNotification, index) => {
-              const { cta, title, message, app, icon, image } = oneNotification;
+    <Container>
+      <Button
+        bg="#e20880"
+        color="#fff"
+        flex="1"
+        radius="100px"
+        padding="10px 10px"
+        onClick={() => setSpam(!spam)}
+      >
+        Spam
+      </Button>
+      {spam == true ? (
+        <Container>
+          <SpamBox />
+        </Container>
+      ) : (
+        <Container>
+          {bgUpdateLoading && (
+            <div style={{ marginTop: "10px" }}>
+              <Loader type="Oval" color="#35c5f3" height={40} width={40} />
+            </div>
+          )}
+          {notifications && (
+            <Items id="scrollstyle-secondary">
+              {notifications.map((oneNotification, index) => {
+                const {
+                  cta,
+                  title,
+                  message,
+                  app,
+                  icon,
+                  image,
+                } = oneNotification;
 
-              // render the notification item
-              return (
-                <div key={`${message}+${title}`}>
-                  {showWayPoint(index) && (
-                    <Waypoint onEnter={() => handlePagination()} />
-                  )}
-                  <NotificationItem
-                    notificationTitle={title}
-                    notificationBody={message}
-                    cta={cta}
-                    app={app}
-                    icon={icon}
-                    image={image}
-                  />
-                </div>
-              );
-            })}
-          </Items>
-        )}
-        {loading && !bgUpdateLoading && (
-          <Loader type="Oval" color="#35c5f3" height={40} width={40} />
-        )}
-        {!notifications.length && !loading && (
-          <CenteredContainerInfo>
-            <DisplayNotice
-              title="You currently have no notifications, try subscribing to some channels."
-              theme="third"
-            />
-          </CenteredContainerInfo>
-        )}
-      </Container>
-    </>
+                // render the notification item
+                return (
+                  <div key={`${message}+${title}`}>
+                    {showWayPoint(index) && (
+                      <Waypoint onEnter={() => handlePagination()} />
+                    )}
+                    <NotificationItem
+                      notificationTitle={title}
+                      notificationBody={message}
+                      cta={cta}
+                      app={app}
+                      icon={icon}
+                      image={image}
+                    />
+                  </div>
+                );
+              })}
+            </Items>
+          )}
+          {loading && !bgUpdateLoading && (
+            <Loader type="Oval" color="#35c5f3" height={40} width={40} />
+          )}
+          {!notifications.length && !loading && (
+            <CenteredContainerInfo>
+              <DisplayNotice
+                title="You currently have no notifications, try subscribing to some channels."
+                theme="third"
+              />
+            </CenteredContainerInfo>
+          )}
+        </Container>
+      )}
+    </Container>
   );
 }
 
